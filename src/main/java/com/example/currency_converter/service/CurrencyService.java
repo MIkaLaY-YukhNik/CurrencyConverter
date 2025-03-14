@@ -12,14 +12,14 @@ public class CurrencyService {
     private static final String API_URL = "https://openexchangerates.org/api/latest.json?app_id=dd23561225204beca0c5fe1cf9bd0d16";
 
     /**
-     * Получает актуальные курсы валют с Open Exchange Rates
-     * @return карта с курсами валют относительно USD
+     * Получает актуальные курсы валют с Open Exchange Rates.
+     * @return карта с курсами валют относительно USD.
      */
     public Map<String, Double> fetchRates() {
         RestTemplate restTemplate = new RestTemplate();
 
         try {
-            // Запрашиваем данные у API Open Exchange Rates
+            // Запрашиваем данные от Open Exchange Rates
             Map<String, Object> response = restTemplate.getForObject(API_URL, Map.class);
 
             // Извлекаем секцию "rates" из ответа
@@ -43,18 +43,30 @@ public class CurrencyService {
     }
 
     /**
-     * Конвертирует сумму из долларов (USD) в другие валюты
-     * @param amount - количество долларов
-     * @return карта с результатами конверсии
+     * Выполняет проверку корректности кода валюты.
+     * @param currencyCode Код валюты в формате ISO 4217.
+     * @return true, если валюта корректна; иначе false.
      */
-    public Map<String, Double> convertFromUSD(double amount) {
-        // Получаем актуальные курсы валют
+    public boolean isCurrencyValid(String currencyCode) {
+        Map<String, Double> rates = fetchRates();
+        return rates.containsKey(currencyCode.toUpperCase());
+    }
+
+    /**
+     * Конвертирует сумму из USD в указанную валюту.
+     * @param amount Количество USD.
+     * @param targetCurrency Целевая валюта (код ISO 4217).
+     * @return Конвертированное значение.
+     */
+    public double convertFromUSD(double amount, String targetCurrency) {
         Map<String, Double> rates = fetchRates();
 
-        // Конвертируем сумму из USD в другие валюты
-        Map<String, Double> results = new HashMap<>();
-        rates.forEach((key, value) -> results.put(key, amount * value));
+        // Проверяем, поддерживается ли валюта
+        if (!rates.containsKey(targetCurrency)) {
+            throw new IllegalArgumentException("Неверный код валюты: " + targetCurrency);
+        }
 
-        return results;
+        double rate = rates.get(targetCurrency);
+        return amount * rate;
     }
 }
