@@ -24,15 +24,11 @@ public class CurrencyController {
      */
     @GetMapping("/convert")
     public Map<String, Object> convert(@RequestParam double amount, @RequestParam String targetCurrency) {
-        // Проверяем корректность кода валюты
         if (!currencyService.isCurrencyValid(targetCurrency)) {
             return Map.of("error", "Неверный код валюты: " + targetCurrency);
         }
 
-        // Выполняем конвертацию
         double convertedAmount = currencyService.convertFromUSD(amount, targetCurrency);
-
-        // Возвращаем результат в формате JSON
         return Map.of(
                 "amount_in_usd", amount,
                 "target_currency", targetCurrency,

@@ -1,4 +1,4 @@
-package com.example.currency_converter.modul;
+package com.example.currency_converter.module;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
