@@ -1,13 +1,11 @@
 package com.example.currency_converter.service;
+import com.example.currency_converter.CurrencyConverterApplication;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 @Service
 public class CurrencyService {
@@ -28,18 +26,8 @@ public class CurrencyService {
         return amount * rate;
     }
 
-    private String getApiKey() {
-        Properties properties = new Properties();
-        try {
-            properties.load(new ClassPathResource("application.properties").getInputStream());
-        } catch (IOException e) {
-            throw new RuntimeException("Не удалось загрузить файл конфигурации.", e);
-        }
-        return properties.getProperty("openexchange.api.key");
-    }
-
     private Map<String, Double> fetchRates() {
-        String apiKey = getApiKey();
+        String apiKey = CurrencyConverterApplication.getApiKey();
         String apiUrl = "https://openexchangerates.org/api/latest.json?app_id=" + apiKey;
 
         RestTemplate restTemplate = new RestTemplate();

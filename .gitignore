@@ -30,6 +30,5 @@ build/
 
 ### VS Code ###
 .vscode/
-# Игнорирование файла конфигурации с API-ключом
-src/main/resources/application.properties
+
 
