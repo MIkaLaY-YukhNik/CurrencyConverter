@@ -16,23 +16,21 @@ public class CurrencyController {
     @Autowired
     private CurrencyService currencyService;
 
-    /**
-     * Обрабатывает запрос на конвертацию валюты.
-     * @param amount Количество USD для конвертации.
-     * @param targetCurrency Целевая валюта (код ISO 4217).
-     * @return Результат конверсии в формате JSON.
-     */
     @GetMapping("/convert")
     public Map<String, Object> convert(@RequestParam double amount, @RequestParam String targetCurrency) {
-        if (!currencyService.isCurrencyValid(targetCurrency)) {
-            return Map.of("error", "Неверный код валюты: " + targetCurrency);
-        }
+        try {
+            if (!currencyService.isCurrencyValid(targetCurrency)) {
+                return Map.of("error", "Неверный код валюты: " + targetCurrency);
+            }
 
-        double convertedAmount = currencyService.convertFromUSD(amount, targetCurrency);
-        return Map.of(
-                "amount_in_usd", amount,
-                "target_currency", targetCurrency,
-                "converted_amount", convertedAmount
-        );
+            double convertedAmount = currencyService.convertFromUSD(amount, targetCurrency);
+            return Map.of(
+                    "amount_in_usd", amount,
+                    "target_currency", targetCurrency,
+                    "converted_amount", convertedAmount
+            );
+        } catch (Exception e) {
+            return Map.of("error", "Ошибка обработки запроса: " + e.getMessage());
+        }
     }
 }
